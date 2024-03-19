@@ -1,0 +1,38 @@
+employees:
+  - name: John Doe
+    age: 30
+    department: Engineering
+    salary: 50000
+  - name: Jane Smith
+    age: 28
+    department: Marketing
+    salary: 45000
+  - name: Alex Johnson
+    age: 35
+    department: HR
+    salary: 48000
+
+products:
+  - name: Laptop
+    price: 1000
+    stock: 50
+  - name: Smartphone
+    price: 800
+    stock: 100
+  - name: Headphones
+    price: 50
+    stock: 200
+
+customers:
+  - name: Alice Brown
+    age: 25
+    email: alice@example.com
+    address: 123 Main St, Cityville
+  - name: Bob Green
+    age: 32
+    email: bob@example.com
+    address: 456 Elm St, Townsville
+  - name: Charlie White
+    age: 40
+    email: charlie@example.com
+    address: 789 Oak St, Villagetown
