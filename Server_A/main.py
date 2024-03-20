@@ -19,29 +19,39 @@ def parse_csv():
     with open(csv_file, 'r') as file:
         reader = csv.reader(file)
         data = list(reader)
+    print(data)
     return data
 
 def parse_json():
     with open(json_file, 'r') as file:
         data = json.load(file)
+    print(data)
     return data
 
 def parse_yaml():
     with open(yaml_file, 'r') as file:
         data = yaml.safe_load(file)
+    print(data)
     return data
 
 def parse_txt():
     with open(txt_file, 'r') as file:
         data = file.read()
+    print(data)
     return data
 
 def parse_xml():
     tree = ET.parse(xml_file)
     root = tree.getroot()
     data = []
-    for child in root:
-        data.append({child.tag: child.text})
+
+    for book in root.findall('book'):
+        book_data = {}
+        for child in book:
+            book_data[child.tag] = child.text
+        data.append(book_data)
+
+    print(data)
     return data
 
 @app.get("/get_data")
@@ -69,6 +79,6 @@ async def process_data(format: str):
     # Forward request to Server B
     try:
         response = requests.get('http://localhost:5001/get_data', params={'format': format})
-        return {'data_from_server_B': response.json()}
+        return {'data_from_server_B': response.json()} 
     except:
         print('ERROR: Remember to ensure the node server running')

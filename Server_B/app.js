@@ -3,6 +3,7 @@ const axios = require('axios');
 const fs = require('fs');
 const csv = require('csv-parser')
 const { XMLParser, XMLBuilder, XMLValidator} = require("fast-xml-parser");
+const YAML = require('yaml')
 
 const app = express();
 const port = 5001;
@@ -24,21 +25,20 @@ async function parseCSV() {
         console.log(results);
         resolve(results);
      });
-
     });
 }
 
-async function parseTXT() {
-    return await new Promise((resolve, reject) => {
-        const txtData = fs.readFileSync(`${__dirname}${txtFile}`);
-        console.log(txtData);
-        resolve(txtData);
-    }) 
+// This one works but crashes the server. Don't know why.
+function parseTXT() {
+    const txtData = fs.readFileSync(`${__dirname}${txtFile}`);
+    console.log(txtData.toString());
+    return txtData.toString();
 }
 
 function parseJSON() {
     const fileData = fs.readFileSync(`${__dirname}${jsonFile}`);
     const parsedJson = JSON.parse(fileData)
+    console.log(parsedJson);
     return parsedJson;
 }
 
@@ -48,13 +48,15 @@ function parseXML() {
     let jObj = parser.parse(xml);
     const builder = new XMLBuilder();
     const xmlContent = builder.build(jObj);
+    console.log(xmlContent);
     return xmlContent;
 }
 
 function parseYAML() {
-    const fileData = fs.readFileSync(`${__dirname}${yamlFile}`)
-    const parsedYAML = YAML.parse(fileData)
-    return parsedYAML;
+        const fileData = fs.readFileSync(`${__dirname}${yamlFile}`, 'utf-8');
+        const parsedYAML = YAML.parse(fileData);
+        console.log(parsedYAML);
+        return parsedYAML;
 }
 
 const formatTypes = ['csv', 'json', 'yaml', 'txt', 'xml'];
@@ -77,16 +79,16 @@ app.get('/get_data', async (req, res) => {
             }
             break;
         case 'txt':
-             try {
-                data = await parseTXT();
+            try {
+                data = parseTXT();
             } catch (error) {
                 console.error(error);
                 return res.status(500).json({ error: 'Error parsing TXT' });
             }
-            break;
+            break;            
         case 'json':
              try {
-                data = parseJSON();
+                 data = parseJSON();
             } catch (error) {
                 console.error(error);
                 return res.status(500).json({ error: 'Error parsing JSON' });
@@ -109,7 +111,7 @@ app.get('/get_data', async (req, res) => {
             }
             break;
     }
-    res.send(data)
+    res.json(data);
 })
 
 app.get('/process_data', async (req, res) => {
